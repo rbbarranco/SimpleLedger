@@ -50,6 +50,10 @@ The application layer is implemented in the SimpleLedger.Application project. Th
 ##### Models
 Following the CQRS pattern, we have separate models for all requests and responses. Separate requests are also done for each operation.
 
+Each response implements the IResponse<TData, TResponseCode> interface. The TData type refers to the data returned by the response if successful. 
+The TResponseCode type refers to an enum (or any type) that's used by the operation to indicate the status of the operation. 
+Each operation has its own response codes enum.
+
 #### Validators
 Validators are implemented for each request. This is done using FluentValidation.
 
