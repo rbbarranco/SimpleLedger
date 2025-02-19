@@ -1,5 +1,4 @@
 ## Description
----
 
 This is an implementation of a simple ledger. The following are the features implemented:
 - Record transactions - Deposits and Withdrawals - for an account
@@ -7,7 +6,7 @@ This is an implementation of a simple ledger. The following are the features imp
 - View transaction history for an account
 
 ## Assumptions
----
+
 For simplicity sake, the deposit and withdrawal transactions will only contain the following properties
 - Account Id
 - Amount
