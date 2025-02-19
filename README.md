@@ -35,9 +35,9 @@ Validations are done for each request. If the validation fails, the request is r
 - For simplicity sake, all transactions are returned ordered descending by TransactionDate. Pagination is not implemented.
 
 ## Design
-The solution was implemented following Clean architecture. The project is divided in the following layers.
+The solution was implemented following Clean architecture. The project is divided in the following layers:
 
-#### Domain layer
+### Domain layer
 The domain layer is implemented in the SimpleLedger.Domain project. This contains the domain entities, value objects, and business exceptions.
 This also contains the interface for the account repository.
 
@@ -59,11 +59,11 @@ Validators are implemented for each request. This is done using FluentValidation
 #### AccountService
 This serves as the orchestrator for account related operations.
 
-#### Infrastructure layer
-##### SimpleLedger.Infrastructure.AccountRepository
+### Infrastructure layer
+#### SimpleLedger.Infrastructure.AccountRepository
 This contains the implementation of the account repository.For simplicity sake, the repository only stores in-memory.
 
-#### Presentation Layer
+### Presentation Layer
 The presentation layer is implemented in the SimpleLedger project. The layer is only responsible for calling the application layer and converting responses to Http responses.
 
 ## Testing
