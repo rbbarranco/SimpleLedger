@@ -71,7 +71,7 @@ Unit tests are implemented in this solution. The tests are implemented using xUn
 
 The unit tests are implemented in 3 different projects, one for each layer.
 
-I've skipped integration tests for this exercise as I prefer to focus on the unit tests. My preference is to write the integration tests in a separate solution as well.
+I've skipped integration tests for this exercise as I prefer to focus on the unit tests. You may run tests using the test explorer in Visual Studio.
 
 ### SimpleLedger.Domain.Tests
 Contains the business logic unit tests for the Account entity.
