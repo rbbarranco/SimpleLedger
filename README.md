@@ -81,9 +81,10 @@ Contains the tests for the application layer services including tests for the va
 Contains the tests for controller. The AccountService is just mocked.
 
 ## Running the application
-- Open the solution using Visual Studio or similar IDE and run the SimpleLedger project. 
+- Open the solution using Visual Studio or similar IDE and run the SimpleLedger project via IIS Express. 
 - You can access swagger using http://localhost:47152/swagger/index.html
 - From there you can run the tests against the API.
+- Use the same account id for testing the GET operations.
 
 Sample Post Deposit Request
 ```
