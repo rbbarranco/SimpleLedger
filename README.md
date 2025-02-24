@@ -110,3 +110,12 @@ Sample Post Withdrawal Request
   "correlationId": "c2f6e62a-1f8b-4424-9b80-29fcfe962a73"
 }
 ```
+
+## Design considerations and Improvements
+The design is based on the assumption that the load is not that heavy and a single API can handle both the read and write operations.
+
+- In the real world, the load on both posting the transactions and reads can be heavy and may be different. It probably is a good idea to have separate services for both. This allows us the scale each service indepdently.
+- The read operations can be cached to improve performance. The read operations can read from a dedicated read model, possibly a NoSQL database like Redis or similar.
+- The current implementation of posting deposits and withdrawals requires that the transactions are loaded to be able to do the logic, this might not be feasible when the data grows.
+    - We can possibly use a domain service and move all the logic there from the Account entity.
+    - OR possibly use a snapshot of the data
