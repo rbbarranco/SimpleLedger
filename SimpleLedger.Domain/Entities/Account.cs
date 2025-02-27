@@ -21,8 +21,9 @@ namespace SimpleLedger.Domain.Entities
 
         public void TryAddDeposit(DepositTransaction deposit)
         {
-            if (Deposits.Exists(deposit.ReferenceId))
-                throw new DepositTransactionAlreadyExistsException($"Deposit transaction with reference id {deposit.ReferenceId} already exists.");
+            //remove if idempotency checks done in account service (exercise).
+            //if (Deposits.Exists(deposit.ReferenceId))
+            //    throw new DepositTransactionAlreadyExistsException($"Deposit transaction with reference id {deposit.ReferenceId} already exists.");
 
             Deposits.Add(deposit);
         }

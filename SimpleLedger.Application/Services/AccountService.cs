@@ -19,7 +19,8 @@ namespace SimpleLedger.Application.Services
         IValidator<PostWithdrawalRequest> postWithdrawalRequestValidator,
         IValidator<GetCurrentBalanceRequest> getCurrentBalanceRequestValidator,
         IValidator<GetTransactionHistoryRequest> getTransactionHistoryRequestValidator,
-        IAccountRepository accountRepository) : IAccountService
+        IAccountRepository accountRepository,
+        ITransactionCorrealtionMappingRepository transactionCorrealtionMappingRepository) : IAccountService
     {
         public async Task<PostDepositResponse> PostDepositAsync(PostDepositRequest request)
         {
@@ -27,6 +28,12 @@ namespace SimpleLedger.Application.Services
             var validationResult = postDepositRequestValidator.Validate(request);
             if (!validationResult.IsValid)
                 return new PostDepositResponse(PostDepositResponseCodes.RequestValidationFailed, validationResult.Errors.FirstOrDefault()?.ErrorMessage, request.CorrelationId);
+
+            //Idempotency check (To be applied in withdrawals as well, save w/TTL if not existing)
+            var correlation = transactionCorrealtionMappingRepository.GetCorrelation(request.CorrelationId);
+            if (correlation is not null)
+                return new PostDepositResponse(PostDepositResponseCodes.DepositAlreadyExisting, "Deposit already exists.", request.CorrelationId);
+            transactionCorrealtionMappingRepository.CreateCorrelation(request.CorrelationId);
 
             //Get or create account
             var account = await GetOrCreateAccountAsync(request.AccountId);
@@ -100,7 +107,7 @@ namespace SimpleLedger.Application.Services
                 request.CorrelationId);
         }
 
-        public async Task<GetTransactionHistoryResponse> GetTransactionHistoryAsync(GetTransactionHistoryRequest request)
+        public async Task<GetTransactionHistoryResponse> GetTransactionHistoryAsync(GetTransactionHistoryRequest request, int page, int pagSize)
         {
             //Validate
             var validationResult = getTransactionHistoryRequestValidator.Validate(request);
@@ -119,9 +126,15 @@ namespace SimpleLedger.Application.Services
             transactions.AddRange(account.Deposits.Value.Select(d => new Transaction(TransactionType.Deposit, d.ReferenceId, d.Amount, d.TransactionDate, d.Reference)));
             transactions.AddRange(account.Withdrawals.Value.Select(w => new Transaction(TransactionType.Withdrawal, w.ReferenceId, w.Amount, w.TransactionDate, w.Reference)));
 
+            //Get paged
+            var orderedTransactions = transactions.OrderByDescending(t => t.TransactionDate);
+
+            var skipCount = (page-1) * pagSize;
+            var pagedTransactions = orderedTransactions.Skip(skipCount).Take(pagSize);
+
             //Return response
             var transactionHistory =
-                new TransactionHistory(request.AccountId, transactions.OrderByDescending(t => t.TransactionDate));
+                new TransactionHistory(request.AccountId, pagedTransactions);
             return new GetTransactionHistoryResponse(transactionHistory, GetTransactionHistoryResponseCodes.Success, string.Empty, request.CorrelationId);
         }
 
